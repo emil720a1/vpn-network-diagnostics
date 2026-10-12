@@ -4,14 +4,14 @@ namespace VpnNetworkDiagnostics;
 
 public class HttpResponseParser
 {
-    public void Parse(string response)
+    public int Parse(string response)
     {
         int lineEndIndex = response.IndexOf("\r\n");
 
         if (lineEndIndex == -1)
         {
             Console.WriteLine("Invalid HTTP response.");
-            return;
+            return -1;
         }
 
         string statusLine = response[..lineEndIndex];
@@ -21,7 +21,7 @@ public class HttpResponseParser
         if (headersEndIndex == -1)
         {
             Console.WriteLine("HTTP headers were not found.");
-            return;
+            return -1;
         }
 
         int bodyStartIndex = headersEndIndex + 4;
@@ -41,7 +41,7 @@ public class HttpResponseParser
             !int.TryParse(statusParts[1], out int statusCode))
         {
             Console.WriteLine("Invalid HTTP status line.");
-            return;
+            return -1;
         }
 
         Console.WriteLine($"Status code: {statusCode}");
@@ -87,6 +87,8 @@ public class HttpResponseParser
 
         Console.WriteLine("\nDecoded response body:");
         Console.WriteLine(body);
+
+        return statusCode;
     }
 
     private string DecodeChunkedBody(string body)
